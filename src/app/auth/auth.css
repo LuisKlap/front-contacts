@@ -1,0 +1,30 @@
+.min-h-screen {
+  background-image: url('/assets/map.jpg');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.min-h-screen__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
+  z-index: 1;
+}
+
+.min-h-screen>* {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 420px) {
+  .min-h-screen {
+    padding: 16px;
+  }
+}

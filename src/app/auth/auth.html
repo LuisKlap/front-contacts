@@ -1,0 +1,6 @@
+<div class="min-h-screen">
+  <div class="min-h-screen__overlay"></div>
+
+  <app-signup *ngIf="currentStep() === 'sign-up'"></app-signup>
+  <app-login *ngIf="currentStep() === 'login'"></app-login>
+</div>
