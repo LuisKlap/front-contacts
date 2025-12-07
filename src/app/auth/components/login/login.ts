@@ -73,13 +73,15 @@ export class Login {
       .subscribe({
         next: (res) => {
           console.debug('Login response', res);
+
           if (res?.token) {
             localStorage.setItem('auth_token', res.token);
           }
+
           this.snackBar.open('Login successful.', 'OK', { duration: 2000 });
           this.loginForm.reset();
-          // navegar para a rota principal/contatos - ajuste se necessário
-          this.router.navigate(['/contacts']);
+
+          this.router.navigate(['/home']);
         },
         error: (err) => {
           console.error('Login error', err);

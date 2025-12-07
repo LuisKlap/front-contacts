@@ -1,0 +1,20 @@
+<div class="list-container">
+  <div class="header">
+    <h3>Contacts</h3>
+    <button class="btn primary" (click)="onCreate()">New</button>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Loading...
+  </div>
+
+  <div class="list">
+    <app-contact-item *ngFor="let item of contacts" [contact]="item" [selected]="selectedContact?.id === item.id"
+      (select)="onSelect(item)" (edit)="onEdit(item)" (delete)="onDelete(item)">
+    </app-contact-item>
+
+    <div *ngIf="!loading && contacts.length === 0" class="empty">
+      No contacts found.
+    </div>
+  </div>
+</div>

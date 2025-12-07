@@ -1,0 +1,24 @@
+<div class="home-container">
+
+  <!-- filtros -->
+  <app-contact-filters (filterChange)="onFilter($event)" (create)="onCreate()">
+  </app-contact-filters>
+
+  <div class="content">
+
+    <!-- lista -->
+    <app-contact-list [contacts]="contacts()" [loading]="loading()" [selectedContact]="selectedContact()"
+      (select)="onSelect($event)" (edit)="onEdit($event)" (delete)="onDelete($event)" (create)="onCreate()">
+    </app-contact-list>
+
+    <!-- mapa -->
+    <app-map [contacts]="contacts()" [selected]="selectedContact()">
+    </app-map>
+
+  </div>
+
+  <!-- modal -->
+  <app-contact-form *ngIf="showForm()" [contact]="editingContact()" (save)="onSave($event)" (close)="onCloseForm()">
+  </app-contact-form>
+
+</div>

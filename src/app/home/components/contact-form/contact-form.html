@@ -1,0 +1,62 @@
+<div class="form-overlay">
+  <div class="form-container">
+    <h2>{{ contact ? 'Edit Contact' : 'New Contact' }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="row">
+        <label>Name</label>
+        <input formControlName="name" />
+      </div>
+
+      <div class="row">
+        <label>CPF</label>
+        <input formControlName="cpf" />
+      </div>
+
+      <div class="row">
+        <label>Phone</label>
+        <input formControlName="phone" />
+      </div>
+
+      <div class="row">
+        <label>CEP</label>
+        <input formControlName="cep" />
+      </div>
+
+      <div class="row">
+        <label>State</label>
+        <input formControlName="state" />
+      </div>
+
+      <div class="row">
+        <label>City</label>
+        <input formControlName="city" />
+      </div>
+
+      <div class="row">
+        <label>Street</label>
+        <input formControlName="street" />
+      </div>
+
+      <div class="row">
+        <label>Number</label>
+        <input formControlName="number" />
+      </div>
+
+      <div class="row">
+        <label>Complement</label>
+        <input formControlName="complement" />
+      </div>
+
+      <div class="row">
+        <label>Neighborhood</label>
+        <input formControlName="neighborhood" />
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn secondary" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+<!-- src/app/home/components/contact-filters/contact-filters.html -->
+<div class="filters">
+  <div class="left">
+    <input type="text" [formControl]="search" placeholder="Search by name or CPF" aria-label="search"
+      class="search-input" />
+    <button class="btn small" (click)="clear()" title="Clear search">Clear</button>
+  </div>
+
+  <div class="right">
+    <button class="btn primary" (click)="onCreate()">New contact</button>
+  </div>
+</div>

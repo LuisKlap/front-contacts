@@ -1,0 +1,7 @@
+<div class="map-container">
+  <img src="assets/map.jpg" class="map-image" />
+
+  <!-- pins -->
+  <div *ngFor="let c of contacts" class="pin" [class.selected]="selected?.id === c.id" [style.left.%]="c.longitude"
+    [style.top.%]="c.latitude" title="{{ c.name }}"></div>
+</div>

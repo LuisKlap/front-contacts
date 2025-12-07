@@ -6,7 +6,18 @@ import { Login } from './auth/components/login/login';
 export const routes: Routes = [
   { path: 'signup', component: Signup },
   { path: 'login', component: Login },
-  { path: 'auth', component: Auth },
-  { path: '', redirectTo: 'signup', pathMatch: 'full' },
-  { path: '**', redirectTo: 'signup' }
+
+  {
+    path: 'auth',
+    component: Auth,
+  },
+
+  {
+    path: 'home',
+    loadComponent: () => import('./home/home').then(m => m.Home)
+  },
+
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '**', redirectTo: 'login' }
 ];
+

@@ -1,0 +1,12 @@
+<div class="item" [class.selected]="selected" (click)="onSelect()">
+  <div class="info">
+    <div class="name">{{ contact.name }}</div>
+    <div class="cpf">{{ contact.cpf }}</div>
+    <div class="phone">{{ contact.phone }}</div>
+  </div>
+
+  <div class="actions">
+    <button class="btn small" (click)="onEdit($event)">Edit</button>
+    <button class="btn small danger" (click)="onDelete($event)">Delete</button>
+  </div>
+</div>
