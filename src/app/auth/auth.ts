@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ViewEncapsulation } from '@angular/core';
 import { Signup } from './components/signup/signup';
 import { CommonModule } from '@angular/common';
 import { Login } from './components/login/login';
@@ -8,7 +8,8 @@ import { Login } from './components/login/login';
   standalone: true,
   imports: [CommonModule, Signup, Login],
   templateUrl: './auth.html',
-  styleUrls: ['./auth.css'],
+  styleUrl: './auth.css',
+  encapsulation: ViewEncapsulation.None,
 })
 export class Auth {
   currentStep = signal<'login' | 'sign-up'>('sign-up');

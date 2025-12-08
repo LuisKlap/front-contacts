@@ -33,7 +33,6 @@ export class ContactFiltersComponent implements OnDestroy {
     this.filterChange.emit('');
   }
 
-  // método chamado pelo template -> emite create
   onCreate() {
     this.create.emit();
   }

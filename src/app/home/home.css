@@ -55,10 +55,10 @@
 /* área que contém os itens da lista — scroll independente */
 .list-column .list {
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   flex: 1 1 auto;
   min-height: 0;
-  /* importante para que o scroll funcione em flex containers */
   background: transparent;
 }
 
@@ -136,18 +136,19 @@
   .content {
     flex-direction: column;
     padding: 8px;
+    gap: 8px;
   }
 
   .list-column {
     width: 100%;
-    max-height: 36vh;
-    border-radius: 8px;
-    margin-bottom: 8px;
+    min-width: unset;
+    max-width: unset;
+    height: 50vh;
+    margin-bottom: 0;
   }
 
   .map-column {
-    height: calc(100% - 40vh);
-    border-radius: 8px;
+    height: 40vh;
   }
 }
 

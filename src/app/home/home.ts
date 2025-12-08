@@ -63,7 +63,12 @@ export class Home {
   }
 
   onSelect(contact: any) {
-    this.selectedContact.set(contact);
+    // toggle: se clicar no mesmo contato, fecha; senão, abre o novo
+    if (this.selectedContact()?.id === contact.id) {
+      this.selectedContact.set(null);
+    } else {
+      this.selectedContact.set(contact);
+    }
   }
 
   onCreate() {
