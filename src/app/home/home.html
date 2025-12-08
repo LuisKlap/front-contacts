@@ -7,14 +7,14 @@
       </div>
 
       <div class="list">
-        <app-contact-list [contacts]="contacts()" [loading]="loading()" [selectedContact]="selectedContact()"
+        <app-contact-list [contacts]="contacts()" [loading]="loading()" [selectedContacts]="selectedContacts()"
           (select)="onSelect($event)" (edit)="onEdit($event)" (delete)="onDelete($event)" (create)="onCreate()">
         </app-contact-list>
       </div>
     </div>
 
     <div class="map-column">
-      <app-map [contacts]="contacts()" [selected]="selectedContact()">
+      <app-map [contacts]="contacts()" [selectedContacts]="selectedContacts()">
       </app-map>
     </div>
   </div>

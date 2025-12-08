@@ -17,12 +17,10 @@ export class ContactItemComponent {
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
 
-  // chamado pelo template (click no item)
   onSelect() {
     this.select.emit(this.contact);
   }
 
-  // chamados pelos botões (parar propagação no template)
   onEdit(event: MouseEvent) {
     event.stopPropagation();
     this.edit.emit(this.contact);
@@ -33,7 +31,6 @@ export class ContactItemComponent {
     this.delete.emit(this.contact);
   }
 
-  // obter iniciais do nome (primeiras letras das primeiras duas palavras)
   getInitials(): string {
     if (!this.contact?.name) return '?';
     const words = this.contact.name.trim().split(' ').filter((w: string) => w.length > 0);
@@ -41,7 +38,6 @@ export class ContactItemComponent {
     return (words[0][0] + words[words.length - 1][0]).toUpperCase();
   }
 
-  // formatar telefone com máscara (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
   formatPhone(phone: string): string {
     if (!phone) return '';
     const digits = phone.replace(/\D/g, '');
@@ -53,7 +49,6 @@ export class ContactItemComponent {
     return phone;
   }
 
-  // formatar CPF com máscara XXX.XXX.XXX-XX
   formatCPF(cpf: string): string {
     if (!cpf) return '';
     const digits = cpf.replace(/\D/g, '');
@@ -63,7 +58,6 @@ export class ContactItemComponent {
     return cpf;
   }
 
-  // obter endereço completo
   getFullAddress(): string {
     if (!this.contact) return '';
     const { street, number, complement, neighborhood, city, state, cep } = this.contact;

@@ -13,12 +13,17 @@ import { ContactItemComponent } from '../contact-item/contact-item';
 export class ContactListComponent {
   @Input() contacts: any[] = [];
   @Input() loading = false;
-  @Input() selectedContact: any | null = null;
+  @Input() selectedContacts: any[] = [];
 
   @Output() select = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
   @Output() create = new EventEmitter<void>();
+
+  // Verifica se o contato está na lista de selecionados
+  isSelected(contact: any): boolean {
+    return this.selectedContacts?.some(c => c.id === contact.id) || false;
+  }
 
   // métodos usados no template -> re-emit para o pai
   onSelect(contact: any) {

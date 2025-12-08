@@ -1,7 +1,25 @@
 <div class="map-container">
-  <img src="assets/map.jpg" class="map-image" />
+  <google-map [center]="center" [zoom]="zoom" [options]="options" width="100%" height="100%">
 
-  <!-- pins -->
-  <div *ngFor="let c of contacts" class="pin" [class.selected]="selected?.id === c.id" [style.left.%]="c.longitude"
-    [style.top.%]="c.latitude" title="{{ c.name }}"></div>
+    <!-- Marcadores para cada contato com coordenadas válidas -->
+    <map-marker *ngFor="let contact of contacts; let i = index" [position]="getMarkerPosition(contact)!"
+      [options]="getMarkerOptions(contact)" [title]="contact.name" (mapClick)="openInfoWindow(i, contact)">
+    </map-marker>
+
+    <!-- Janela de informações que aparece ao clicar no marcador -->
+    <map-info-window>
+      <div class="info-window" *ngIf="selectedMarkerContact">
+        <h3>{{ selectedMarkerContact.name }}</h3>
+        <p><strong>CPF:</strong> {{ selectedMarkerContact.cpf }}</p>
+        <p><strong>Telefone:</strong> {{ selectedMarkerContact.phone }}</p>
+        <p><strong>Endereço:</strong><br>{{ getFullAddress(selectedMarkerContact) }}</p>
+      </div>
+    </map-info-window>
+  </google-map>
+
+  <!-- Mensagem quando não há contatos com coordenadas -->
+  <div class="no-coordinates" *ngIf="contacts.length === 0">
+    <span class="material-icons">location_off</span>
+    <p>Nenhum contato cadastrado ainda</p>
+  </div>
 </div>

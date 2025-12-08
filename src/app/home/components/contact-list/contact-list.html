@@ -4,12 +4,17 @@
     <button class="btn primary" (click)="onCreate()">New</button>
   </div>
 
+  <div *ngIf="selectedContacts && selectedContacts.length > 0" class="selection-info">
+    <span class="material-icons">pin_drop</span>
+    {{ selectedContacts.length }} contact{{ selectedContacts.length > 1 ? 's' : '' }} selected on map
+  </div>
+
   <div *ngIf="loading" class="loading">
     Loading...
   </div>
 
   <div class="list">
-    <app-contact-item *ngFor="let item of contacts" [contact]="item" [selected]="selectedContact?.id === item.id"
+    <app-contact-item *ngFor="let item of contacts" [contact]="item" [selected]="isSelected(item)"
       (select)="onSelect(item)" (edit)="onEdit(item)" (delete)="onDelete(item)">
     </app-contact-item>
 

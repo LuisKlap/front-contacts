@@ -51,3 +51,20 @@
   background: #1976d2;
   color: white;
 }
+
+.selection-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #e3f2fd;
+  border-bottom: 1px solid #90caf9;
+  font-size: 13px;
+  color: #1565c0;
+  font-weight: 500;
+}
+
+.selection-info .material-icons {
+  font-size: 18px;
+  color: #1976d2;
+}

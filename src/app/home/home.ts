@@ -26,7 +26,7 @@ export class Home {
   total = signal(0);
   loading = signal(false);
 
-  selectedContact = signal<any | null>(null);
+  selectedContacts = signal<any[]>([]);
   showForm = signal(false);
   editingContact = signal<any | null>(null);
 
@@ -63,11 +63,17 @@ export class Home {
   }
 
   onSelect(contact: any) {
-    // toggle: se clicar no mesmo contato, fecha; senão, abre o novo
-    if (this.selectedContact()?.id === contact.id) {
-      this.selectedContact.set(null);
+    // toggle: se clicar no mesmo contato, remove da seleção; senão, adiciona
+    const currentSelection = this.selectedContacts();
+    const index = currentSelection.findIndex(c => c.id === contact.id);
+
+    if (index >= 0) {
+      // Remove da seleção
+      const newSelection = currentSelection.filter(c => c.id !== contact.id);
+      this.selectedContacts.set(newSelection);
     } else {
-      this.selectedContact.set(contact);
+      // Adiciona à seleção
+      this.selectedContacts.set([...currentSelection, contact]);
     }
   }
 
@@ -99,9 +105,11 @@ export class Home {
   onDelete(contact: any) {
     this.contactService.deleteContact(contact.id).subscribe({
       next: () => {
-        if (this.selectedContact()?.id === contact.id) {
-          this.selectedContact.set(null);
-        }
+        // Remove da seleção se estava selecionado
+        const currentSelection = this.selectedContacts();
+        const newSelection = currentSelection.filter(c => c.id !== contact.id);
+        this.selectedContacts.set(newSelection);
+
         this.fetchContacts();
       }
     });
