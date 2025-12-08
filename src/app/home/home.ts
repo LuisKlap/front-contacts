@@ -1,4 +1,5 @@
 import { Component, signal, effect } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ContactService } from './service/contact.service';
 
 // imports dos componentes standalone
@@ -11,6 +12,7 @@ import { MapComponent } from './components/map/map';
   selector: 'app-home',
   standalone: true,
   imports: [
+    CommonModule,
     ContactFiltersComponent,
     ContactListComponent,
     ContactFormComponent,

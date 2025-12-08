@@ -1,23 +1,24 @@
 <div class="home-container">
-
-  <!-- filtros -->
-  <app-contact-filters (filterChange)="onFilter($event)" (create)="onCreate()">
-  </app-contact-filters>
-
   <div class="content">
+    <div class="list-column">
+      <div class="filters">
+        <app-contact-filters (filterChange)="onFilter($event)" (create)="onCreate()">
+        </app-contact-filters>
+      </div>
 
-    <!-- lista -->
-    <app-contact-list [contacts]="contacts()" [loading]="loading()" [selectedContact]="selectedContact()"
-      (select)="onSelect($event)" (edit)="onEdit($event)" (delete)="onDelete($event)" (create)="onCreate()">
-    </app-contact-list>
+      <div class="list">
+        <app-contact-list [contacts]="contacts()" [loading]="loading()" [selectedContact]="selectedContact()"
+          (select)="onSelect($event)" (edit)="onEdit($event)" (delete)="onDelete($event)" (create)="onCreate()">
+        </app-contact-list>
+      </div>
+    </div>
 
-    <!-- mapa -->
-    <app-map [contacts]="contacts()" [selected]="selectedContact()">
-    </app-map>
-
+    <div class="map-column">
+      <app-map [contacts]="contacts()" [selected]="selectedContact()">
+      </app-map>
+    </div>
   </div>
 
-  <!-- modal -->
   <app-contact-form *ngIf="showForm()" [contact]="editingContact()" (save)="onSave($event)" (close)="onCloseForm()">
   </app-contact-form>
 

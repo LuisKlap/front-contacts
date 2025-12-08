@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Contact } from '../models/contact.model';
 
 @Injectable({
   providedIn: 'root',
@@ -9,17 +10,8 @@ export class ContactService {
   private http = inject(HttpClient);
   private baseUrl = 'http://localhost:8080/api/contacts';
 
-  private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
-    return new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-  }
-
-  createContact(body: any): Observable<any> {
-    return this.http.post(this.baseUrl, body, {
-      headers: this.getAuthHeaders(),
-    });
+  createContact(body: Contact): Observable<Contact> {
+    return this.http.post<Contact>(this.baseUrl, body);
   }
 
   getContacts(filter: string = '', page = 0, size = 10, sort = 'name,asc'): Observable<any> {
@@ -30,27 +22,18 @@ export class ContactService {
       sort,
     };
 
-    return this.http.get(this.baseUrl, {
-      headers: this.getAuthHeaders(),
-      params,
-    });
+    return this.http.get(this.baseUrl, { params });
   }
 
   getById(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${id}`, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.get(`${this.baseUrl}/${id}`);
   }
 
-  updateContact(id: number, body: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, body, {
-      headers: this.getAuthHeaders(),
-    });
+  updateContact(id: number, body: Contact): Observable<Contact> {
+    return this.http.put<Contact>(`${this.baseUrl}/${id}`, body);
   }
 
   deleteContact(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.delete(`${this.baseUrl}/${id}`);
   }
 }

@@ -1,0 +1,183 @@
+/* home.css - layout principal da Home */
+
+/* garantir que o app ocupe toda a viewport */
+:host,
+.home-container {
+  display: block;
+  height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--app-bg, #f7f7f9);
+  color: var(--text-color, #222);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* container interno que alinha a coluna de filtros/lista e o mapa */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* area de conteúdo principal: lista à esquerda e mapa à direita */
+.content {
+  display: flex;
+  flex: 1 1 auto;
+  gap: 12px;
+  padding: 12px;
+  box-sizing: border-box;
+  align-items: stretch;
+}
+
+/* coluna esquerda: filtros no topo + lista (com rolagem independente) */
+.list-column {
+  width: 360px;
+  /* largura fixa confortável para lista */
+  min-width: 280px;
+  max-width: 480px;
+  background: var(--panel-bg, #fff);
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(16, 24, 40, 0.06);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: calc(100% - 0px);
+}
+
+/* wrapper do header filtros (já existe em contact-filters / contact-list) */
+.list-column .filters,
+.list-column .header {
+  padding: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  background: transparent;
+}
+
+/* área que contém os itens da lista — scroll independente */
+.list-column .list {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1 1 auto;
+  min-height: 0;
+  /* importante para que o scroll funcione em flex containers */
+  background: transparent;
+}
+
+/* coluna direita: mapa ocupa o resto do espaço */
+.map-column {
+  flex: 1 1 auto;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--map-bg, #e9edf2);
+  box-shadow: 0 1px 4px rgba(16, 24, 40, 0.04);
+  height: calc(100% - 0px);
+}
+
+/* imagem do mapa (quando for imagem placeholder) */
+.map-column .map-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* quando usar o componente map com container interno */
+.map-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* pins posicionados absolutamente */
+.pin {
+  width: 16px;
+  height: 16px;
+  background: #d32f2f;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform .12s ease, background .12s ease;
+  cursor: pointer;
+}
+
+.pin.selected {
+  background: #1976d2;
+  transform: translate(-50%, -50%) scale(1.25);
+}
+
+/* modal do formulário — garantir sobreposição sobre tudo */
+.form-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(3, 10, 18, 0.45);
+  z-index: 1200;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* container do formulário (centralizado) */
+.form-container {
+  width: 100%;
+  max-width: 640px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 12px 36px rgba(2, 6, 23, 0.18);
+  box-sizing: border-box;
+}
+
+/* responsividade — mobile: empilha lista e mapa verticalmente */
+@media (max-width: 900px) {
+  .content {
+    flex-direction: column;
+    padding: 8px;
+  }
+
+  .list-column {
+    width: 100%;
+    max-height: 36vh;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+
+  .map-column {
+    height: calc(100% - 40vh);
+    border-radius: 8px;
+  }
+}
+
+/* ajustes visuais para botões e títulos (se faltar em outros arquivos) */
+.header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.btn {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: var(--primary, #1976d2);
+  color: #fff;
+}
+
+.empty {
+  padding: 14px;
+  color: #666;
+}
+
+/* garantir que inputs e botões do filtro fiquem alinhados */
+.contact-filters-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
