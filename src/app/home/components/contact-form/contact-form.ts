@@ -1,5 +1,5 @@
 // src/app/home/components/contact-form/contact-form.ts
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
@@ -47,7 +47,8 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private addressService: AddressLookupService
+    private addressService: AddressLookupService,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       id: [null],
@@ -93,7 +94,10 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
 
   submit() {
     if (this.form.invalid) return;
-    this.save.emit(this.form.value);
+    const formData = this.form.getRawValue();
+    console.log('Form data completo:', formData);
+    console.log('Neighborhood value:', formData.neighborhood);
+    this.save.emit(formData);
   }
 
   // Verifica se o formulário foi modificado
@@ -166,12 +170,15 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
         distinctUntilChanged(),
         tap(() => {
           this.isLoadingAddress = true;
-          this.addressSuggestions = [];
+          this.showSuggestions = true; // Mostra enquanto carrega
+          this.cdr.markForCheck();
         }),
         switchMap((searchTerm: string) => {
           if (!searchTerm || searchTerm.length < 3) {
             this.isLoadingAddress = false;
             this.showSuggestions = false;
+            this.addressSuggestions = [];
+            this.cdr.markForCheck();
             return [];
           }
 
@@ -187,10 +194,13 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
           this.addressSuggestions = addresses;
           this.isLoadingAddress = false;
           this.showSuggestions = addresses.length > 0;
+          this.cdr.markForCheck();
         },
         error: () => {
           this.isLoadingAddress = false;
+          this.addressSuggestions = [];
           this.showSuggestions = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -259,8 +269,12 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
               this.cities = [city, ...cities];
             }
             this.isLoadingCities = false;
+            this.cdr.markForCheck();
           },
-          error: () => this.isLoadingCities = false
+          error: () => {
+            this.isLoadingCities = false;
+            this.cdr.markForCheck();
+          }
         });
     }
 
@@ -275,8 +289,12 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
               this.neighborhoods = [neighborhood, ...neighborhoods];
             }
             this.isLoadingNeighborhoods = false;
+            this.cdr.markForCheck();
           },
-          error: () => this.isLoadingNeighborhoods = false
+          error: () => {
+            this.isLoadingNeighborhoods = false;
+            this.cdr.markForCheck();
+          }
         });
     }
 
@@ -294,7 +312,10 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
     this.addressService.getStates()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (states) => this.states = states,
+        next: (states) => {
+          this.states = states;
+          this.cdr.markForCheck();
+        },
         error: (error) => console.error('Erro ao carregar estados:', error)
       });
   }
@@ -306,10 +327,16 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
         takeUntil(this.destroy$),
         debounceTime(300),
         distinctUntilChanged(),
-        tap(() => this.isLoadingCities = true),
+        tap(() => {
+          this.isLoadingCities = true;
+          this.showCitySuggestions = true; // Mostra enquanto carrega
+          this.cdr.markForCheck();
+        }),
         switchMap((searchTerm: string) => {
           if (!searchTerm || searchTerm.length < 2) {
             this.isLoadingCities = false;
+            this.showCitySuggestions = false;
+            this.cdr.markForCheck();
             return of([]);
           }
           const state = this.form.get('state')?.value;
@@ -321,10 +348,13 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
           this.cities = cities;
           this.isLoadingCities = false;
           this.showCitySuggestions = cities.length > 0;
+          this.cdr.markForCheck();
         },
         error: () => {
           this.isLoadingCities = false;
+          this.cities = [];
           this.showCitySuggestions = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -336,10 +366,16 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
         takeUntil(this.destroy$),
         debounceTime(300),
         distinctUntilChanged(),
-        tap(() => this.isLoadingNeighborhoods = true),
+        tap(() => {
+          this.isLoadingNeighborhoods = true;
+          this.showNeighborhoodSuggestions = true; // Mostra enquanto carrega
+          this.cdr.markForCheck();
+        }),
         switchMap((searchTerm: string) => {
           if (!searchTerm || searchTerm.length < 2) {
             this.isLoadingNeighborhoods = false;
+            this.showNeighborhoodSuggestions = false;
+            this.cdr.markForCheck();
             return of([]);
           }
           const state = this.form.get('state')?.value;
@@ -352,10 +388,13 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
           this.neighborhoods = neighborhoods;
           this.isLoadingNeighborhoods = false;
           this.showNeighborhoodSuggestions = neighborhoods.length > 0;
+          this.cdr.markForCheck();
         },
         error: () => {
           this.isLoadingNeighborhoods = false;
+          this.neighborhoods = [];
           this.showNeighborhoodSuggestions = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -371,8 +410,12 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
           next: (cities) => {
             this.cities = cities;
             this.isLoadingCities = false;
+            this.cdr.markForCheck();
           },
-          error: () => this.isLoadingCities = false
+          error: () => {
+            this.isLoadingCities = false;
+            this.cdr.markForCheck();
+          }
         });
 
       // Limpa campos dependentes
@@ -387,6 +430,7 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
   // Chamado quando digita no campo UF
   onStateInput(value: string): void {
     this.showStateSuggestions = value.length > 0;
+    this.cdr.markForCheck();
   }
 
   // Seleciona um estado da lista
@@ -408,8 +452,12 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
           next: (neighborhoods) => {
             this.neighborhoods = neighborhoods;
             this.isLoadingNeighborhoods = false;
+            this.cdr.markForCheck();
           },
-          error: () => this.isLoadingNeighborhoods = false
+          error: () => {
+            this.isLoadingNeighborhoods = false;
+            this.cdr.markForCheck();
+          }
         });
 
       // Limpa bairro
@@ -419,10 +467,6 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
 
   // Chamado quando digita no campo City
   onCityInput(value: string): void {
-    // Mostra sugestões imediatamente se já temos cidades carregadas
-    if (value && this.cities.length > 0) {
-      this.showCitySuggestions = true;
-    }
     this.citySearchSubject.next(value);
   }
 
@@ -435,10 +479,6 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
 
   // Chamado quando digita no campo Neighborhood
   onNeighborhoodInput(value: string): void {
-    // Mostra sugestões imediatamente se já temos bairros carregados
-    if (value && this.neighborhoods.length > 0) {
-      this.showNeighborhoodSuggestions = true;
-    }
     this.neighborhoodSearchSubject.next(value);
   }
 
