@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://backend-uex-contacts-production.up.railway.app/api'
+  apiUrl: (typeof window !== 'undefined' && (window as any)['ENV']?.['API_URL'])
+    || 'https://backend-uex-contacts-production.up.railway.app/api'
 };
