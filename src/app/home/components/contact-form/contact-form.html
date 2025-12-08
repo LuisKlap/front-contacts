@@ -35,10 +35,11 @@
           <label>Estado (UF)</label>
           <div class="address-input-wrapper">
             <input formControlName="state" placeholder="Ex: SP" maxlength="2"
-              (input)="onStateInput($any($event.target).value)" />
+              (input)="onStateInput($any($event.target).value)" (focus)="onStateFocus()"
+              (blur)="closeStateSuggestions()" />
 
-            <div class="address-suggestions" *ngIf="showStateSuggestions && states.length > 0">
-              <div class="suggestion-item" *ngFor="let state of states" (mousedown)="selectState(state)">
+            <div class="address-suggestions" *ngIf="showStateSuggestions && filteredStates.length > 0">
+              <div class="suggestion-item" *ngFor="let state of filteredStates" (mousedown)="selectState(state)">
                 <div class="suggestion-display">{{ state }}</div>
               </div>
             </div>
@@ -48,8 +49,8 @@
         <div class="row half">
           <label>Cidade</label>
           <div class="address-input-wrapper">
-            <input formControlName="city" placeholder="Ex: São Paulo"
-              (input)="onCityInput($any($event.target).value)" />
+            <input formControlName="city" placeholder="Ex: São Paulo" (input)="onCityInput($any($event.target).value)"
+              (focus)="onCityFocus()" (blur)="closeCitySuggestions()" />
             <span *ngIf="isLoadingCities" class="loading-indicator"></span>
 
             <div class="address-suggestions" *ngIf="showCitySuggestions && (cities.length > 0 || isLoadingCities)">

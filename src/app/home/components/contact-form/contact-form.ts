@@ -5,6 +5,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged, switchMap, tap, of, map } from 'rxjs';
 import { AddressLookupService } from '../../service/address-lookup.service';
+import { BrazilianDataService } from '../../service/brazilian-data.service';
 import { Address } from '../../models/address.model';
 
 @Component({
@@ -35,6 +36,7 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
 
   // Autocomplete em cascata
   states: string[] = [];
+  filteredStates: string[] = [];
   cities: string[] = [];
   neighborhoods: string[] = [];
   showStateSuggestions = false;
@@ -48,6 +50,7 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private addressService: AddressLookupService,
+    private brazilianData: BrazilianDataService,
     private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
@@ -276,7 +279,7 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
 
     if (state) {
       this.isLoadingCities = true;
-      this.addressService.getCities(state)
+      this.brazilianData.getCitiesByState(state)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (cities) => {
@@ -323,20 +326,21 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
     }, 100);
   }
 
-  // Carrega lista de estados
+  // Carrega lista de estados do JSON local
   private loadStates(): void {
-    this.addressService.getStates()
+    this.brazilianData.getStates()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (states) => {
           this.states = states;
+          this.filteredStates = states; // Inicializa com todos os estados
           this.cdr.markForCheck();
         },
         error: (error) => console.error('Erro ao carregar estados:', error)
       });
   }
 
-  // Configura busca por cidades com debounce usando Google Places
+  // Configura busca por cidades com debounce usando JSON local
   private setupCitySearch(): void {
     this.citySearchSubject
       .pipe(
@@ -345,17 +349,19 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
         distinctUntilChanged(),
         tap(() => {
           this.isLoadingCities = true;
-          this.showCitySuggestions = true; // Mostra enquanto carrega
           this.cdr.markForCheck();
         }),
         switchMap((searchTerm: string) => {
           if (!searchTerm || searchTerm.length < 2) {
             this.isLoadingCities = false;
-            this.showCitySuggestions = false;
             this.cdr.markForCheck();
             return of([]);
           }
           const state = this.form.get('state')?.value;
+          // Usa JSON local se tiver estado, senão busca no Google Places
+          if (state) {
+            return this.brazilianData.searchCitiesByState(state, searchTerm);
+          }
           return this.addressService.searchCities(searchTerm, state);
         })
       )
@@ -418,9 +424,9 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
   // Chamado quando UF muda
   onStateChange(state: string): void {
     if (state && state.length === 2) {
-      // Carrega todas as cidades do estado
+      // Carrega todas as cidades do estado usando JSON local
       this.isLoadingCities = true;
-      this.addressService.getCities(state)
+      this.brazilianData.getCitiesByState(state)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (cities) => {
@@ -445,7 +451,24 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
 
   // Chamado quando digita no campo UF
   onStateInput(value: string): void {
-    this.showStateSuggestions = value.length > 0;
+    const upperValue = value.toUpperCase();
+    if (upperValue.length === 0) {
+      // Se vazio, mostra todos
+      this.filteredStates = this.states;
+    } else {
+      // Filtra estados que começam com o valor digitado
+      this.filteredStates = this.states.filter(state =>
+        state.toUpperCase().startsWith(upperValue)
+      );
+    }
+    this.showStateSuggestions = true;
+    this.cdr.markForCheck();
+  }
+
+  // Chamado quando foca no campo UF
+  onStateFocus(): void {
+    this.filteredStates = this.states;
+    this.showStateSuggestions = true;
     this.cdr.markForCheck();
   }
 
@@ -483,7 +506,39 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
 
   // Chamado quando digita no campo City
   onCityInput(value: string): void {
-    this.citySearchSubject.next(value);
+    if (value.length >= 2) {
+      this.citySearchSubject.next(value);
+    } else if (value.length === 0) {
+      // Se limpar o campo, mostra todas as cidades novamente
+      this.showCitySuggestions = this.cities.length > 0;
+      this.cdr.markForCheck();
+    }
+  }
+
+  // Chamado quando foca no campo City
+  onCityFocus(): void {
+    // Mostra lista se já tiver cidades carregadas ou carrega do estado usando JSON local
+    const state = this.form.get('state')?.value;
+    if (state && this.cities.length === 0) {
+      this.isLoadingCities = true;
+      this.brazilianData.getCitiesByState(state)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (cities) => {
+            this.cities = cities;
+            this.isLoadingCities = false;
+            this.showCitySuggestions = cities.length > 0;
+            this.cdr.markForCheck();
+          },
+          error: () => {
+            this.isLoadingCities = false;
+            this.cdr.markForCheck();
+          }
+        });
+    } else if (this.cities.length > 0) {
+      this.showCitySuggestions = true;
+      this.cdr.markForCheck();
+    }
   }
 
   // Seleciona uma cidade da lista
