@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -36,6 +36,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private accountService = inject(AccountService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
+  private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   user: User | null = null;
@@ -48,6 +49,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       next: (user) => {
         console.log('HeaderComponent: Recebeu atualização do usuário', user);
         this.user = user;
+        // Força a detecção de mudanças
+        this.cdr.markForCheck();
       }
     });
 
@@ -79,6 +82,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
+    // Limpa os dados do usuário e faz logout
+    this.accountService.clearUser();
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }

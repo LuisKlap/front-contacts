@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -33,6 +33,7 @@ export class ProfileViewComponent implements OnInit, OnDestroy {
   private accountService = inject(AccountService);
   private dialog = inject(MatDialog);
   private dialogRef = inject(MatDialogRef<ProfileViewComponent>);
+  private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   user: User | null = null;
@@ -47,16 +48,21 @@ export class ProfileViewComponent implements OnInit, OnDestroy {
       next: (user) => {
         console.log('ProfileViewComponent: Recebeu atualização do usuário', user);
         this.user = user;
-        if (user) {
-          this.loading = false;
-        }
+        this.loading = false;
+        // Força a detecção de mudanças
+        this.cdr.markForCheck();
       }
     });
 
-    // Tenta pegar o valor atual do cache
+    // Pega o valor atual do cache e exibe imediatamente
     const cachedUser = this.accountService.getCurrentUserValue();
 
-    if (!cachedUser) {
+    if (cachedUser) {
+      // Se tem cache, usa ele imediatamente (já vem do BehaviorSubject atualizado)
+      this.user = cachedUser;
+      this.loading = false;
+      console.log('ProfileViewComponent: Usando dados do cache', cachedUser);
+    } else {
       // Se não tem cache, mostra loading e busca da API
       this.loading = true;
       this.accountService.getCurrentUser().pipe(
@@ -90,13 +96,14 @@ export class ProfileViewComponent implements OnInit, OnDestroy {
       backdropClass: 'profile-backdrop'
     });
 
-    // Aguarda o fechamento do diálogo para forçar uma atualização
+    // Aguarda o fechamento do diálogo
+    // Não é necessário recarregar os dados, pois o AccountService.updateUser()
+    // já atualizou o BehaviorSubject com o response da API
     dialogRef.afterClosed().pipe(
       takeUntil(this.destroy$)
     ).subscribe((updated) => {
       if (updated) {
-        console.log('ProfileViewComponent: Diálogo fechado, dados atualizados');
-        // O observable currentUser$ já deve ter sido atualizado pelo AccountService
+        console.log('ProfileViewComponent: Diálogo fechado, dados já foram atualizados pelo BehaviorSubject');
       }
     });
   }

@@ -11,8 +11,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { finalize } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 import { AuthService } from '../../service/auth.service';
+import { AccountService } from '../../service/account.service';
 
 @Component({
   selector: 'app-login',
@@ -40,6 +41,7 @@ export class Login {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private accountService: AccountService,
     private snackBar: MatSnackBar,
     private router: Router
   ) {
@@ -69,15 +71,22 @@ export class Login {
     console.debug('Login payload', payload);
 
     this.authService.login(payload)
-      .pipe(finalize(() => (this.isLoading = false)))
-      .subscribe({
-        next: (res) => {
+      .pipe(
+        switchMap((res) => {
           console.debug('Login response', res);
 
           if (res?.token) {
             localStorage.setItem('auth_token', res.token);
           }
 
+          // Após o login bem-sucedido, carrega os dados do usuário
+          return this.accountService.getCurrentUser();
+        }),
+        finalize(() => (this.isLoading = false))
+      )
+      .subscribe({
+        next: (user) => {
+          console.debug('User data loaded after login', user);
           this.snackBar.open('Login successful.', 'OK', { duration: 2000 });
           this.loginForm.reset();
 

@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { switchMap, take } from 'rxjs';
 import { AccountService } from '../../../auth/service/account.service';
 import { UpdateUserDto } from '../../../auth/models/user.model';
 
@@ -130,18 +131,23 @@ export class ProfileEditComponent implements OnInit {
       updateData.password = newPassword;
     }
 
-    this.accountService.updateUser(updateData).subscribe({
-      next: (updatedUser) => {
-        console.log('Usuário atualizado:', updatedUser);
+    this.accountService.updateUser(updateData).pipe(
+      // Aguarda a próxima emissão do currentUser$ para garantir sincronização
+      switchMap((updatedUser) => {
+        console.log('ProfileEditComponent: Usuário atualizado com sucesso', updatedUser);
+        // Aguarda a próxima emissão do BehaviorSubject para confirmar propagação
+        return this.accountService.currentUser$.pipe(take(1));
+      })
+    ).subscribe({
+      next: (user) => {
+        console.log('ProfileEditComponent: BehaviorSubject emitiu o usuário atualizado', user);
         this.snackBar.open('Perfil atualizado com sucesso!', 'Fechar', {
           duration: 3000,
           panelClass: ['success-snackbar']
         });
         this.submitting = false;
-        // Aguarda um pouco para garantir que o BehaviorSubject emitiu
-        setTimeout(() => {
-          this.dialogRef.close(true);
-        }, 100);
+        // Agora fecha o diálogo com a certeza de que todos os subscribers foram notificados
+        this.dialogRef.close(true);
       },
       error: (error) => {
         const errorMessage = error.error?.message || 'Erro ao atualizar perfil';

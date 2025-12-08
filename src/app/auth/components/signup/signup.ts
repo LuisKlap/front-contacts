@@ -11,8 +11,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { finalize } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 import { AuthService } from '../../service/auth.service';
+import { AccountService } from '../../service/account.service';
 
 @Component({
   selector: 'app-signup',
@@ -43,6 +44,7 @@ export class Signup {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private accountService: AccountService,
     private snackBar: MatSnackBar,
     private router: Router
   ) {
@@ -75,16 +77,23 @@ export class Signup {
     console.debug('Signup payload', payload);
 
     this.authService.signup(payload)
-      .pipe(finalize(() => (this.isLoading = false)))
-      .subscribe({
-        next: (res) => {
+      .pipe(
+        switchMap((res) => {
           console.debug('Signup response', res);
           if (res?.token) {
             localStorage.setItem('auth_token', res.token);
           }
-          this.snackBar.open('Signup successful. Redirecting to login...', 'OK', { duration: 2500 });
+          // Após o signup bem-sucedido, carrega os dados do usuário
+          return this.accountService.getCurrentUser();
+        }),
+        finalize(() => (this.isLoading = false))
+      )
+      .subscribe({
+        next: (user) => {
+          console.debug('User data loaded after signup', user);
+          this.snackBar.open('Signup successful. Redirecting...', 'OK', { duration: 2500 });
           this.signUpForm.reset();
-          this.router.navigate(['/login']);
+          this.router.navigate(['/home']);
         },
         error: (err) => {
           console.error('Signup error', err);

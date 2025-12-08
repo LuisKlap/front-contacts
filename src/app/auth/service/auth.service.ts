@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { AccountService } from './account.service';
 
 interface SignupRequest {
   fullName: string;
@@ -23,8 +24,16 @@ interface AuthResponse {
 })
 export class AuthService {
   private http = inject(HttpClient);
+  private accountService!: AccountService; // Injeção tardia para evitar dependência circular
   private readonly baseUrl = `${environment.apiUrl}/auth`;
   private readonly TOKEN_KEY = 'auth_token';
+
+  constructor() {
+    // Injeção tardia do AccountService para evitar dependência circular
+    setTimeout(() => {
+      this.accountService = inject(AccountService);
+    });
+  }
 
   signup(data: SignupRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}/signup`, data).pipe(
@@ -40,7 +49,10 @@ export class AuthService {
 
   logout(): void {
     this.removeToken();
-    // O AccountService será limpo pelo interceptor ou pelo próprio componente
+    // Limpa os dados do usuário do AccountService
+    if (this.accountService) {
+      this.accountService.clearUser();
+    }
   }
 
   getToken(): string | null {
