@@ -2,7 +2,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { Address, AddressSearchParams } from '../models/address.model';
 import { GooglePlacesService, PlacePrediction } from './google-places.service';
 import { BrazilianDataService } from './brazilian-data.service';
@@ -179,22 +179,83 @@ export class AddressLookupService {
 
   /**
    * Obtém detalhes completos de um endereço usando Place ID
+   * Se o Google Places não retornar CEP, tenta buscar no ViaCEP
    */
   getAddressDetails(placeId: string): Observable<Address> {
     return this.googlePlaces.getPlaceDetails(placeId).pipe(
-      map((details): Address => ({
-        cep: details.zipCode || null,
-        logradouro: details.street || null,
-        complemento: null,
-        bairro: details.neighborhood || null,
-        localidade: details.city || null,
-        uf: details.stateCode || null,
-        latitude: details.latitude || null,
-        longitude: details.longitude || null,
-        source: 'google-places' as const,
-        exact: true,
-        display: details.formattedAddress,
-      })),
+      switchMap((details) => {
+        // Se o Google já retornou o CEP, usa diretamente
+        if (details.zipCode) {
+          return of({
+            cep: details.zipCode,
+            logradouro: details.street || null,
+            complemento: null,
+            bairro: details.neighborhood || null,
+            localidade: details.city || null,
+            uf: details.stateCode || null,
+            latitude: details.latitude || null,
+            longitude: details.longitude || null,
+            source: 'google-places' as const,
+            exact: true,
+            display: details.formattedAddress,
+          });
+        }
+
+        // Se não tem CEP, tenta buscar no ViaCEP
+        if (details.stateCode && details.city && details.street) {
+          return this.searchByUfCityStreet(details.stateCode, details.city, details.street).pipe(
+            map((viaCepResults) => {
+              // Pega o primeiro resultado do ViaCEP (geralmente o mais preciso)
+              const firstResult = viaCepResults[0];
+
+              return {
+                cep: firstResult?.cep || null,
+                logradouro: details.street || null,
+                complemento: null,
+                bairro: details.neighborhood || firstResult?.bairro || null,
+                localidade: details.city || null,
+                uf: details.stateCode || null,
+                latitude: details.latitude || null,
+                longitude: details.longitude || null,
+                source: firstResult?.cep ? 'viacep+google' as const : 'google-places' as const,
+                exact: true,
+                display: details.formattedAddress,
+              };
+            }),
+            catchError(() => {
+              // Se ViaCEP também falhar, retorna sem CEP
+              return of({
+                cep: null,
+                logradouro: details.street || null,
+                complemento: null,
+                bairro: details.neighborhood || null,
+                localidade: details.city || null,
+                uf: details.stateCode || null,
+                latitude: details.latitude || null,
+                longitude: details.longitude || null,
+                source: 'google-places' as const,
+                exact: true,
+                display: details.formattedAddress,
+              });
+            })
+          );
+        }
+
+        // Se não tem dados suficientes para buscar no ViaCEP, retorna sem CEP
+        return of({
+          cep: null,
+          logradouro: details.street || null,
+          complemento: null,
+          bairro: details.neighborhood || null,
+          localidade: details.city || null,
+          uf: details.stateCode || null,
+          latitude: details.latitude || null,
+          longitude: details.longitude || null,
+          source: 'google-places' as const,
+          exact: true,
+          display: details.formattedAddress,
+        });
+      }),
       catchError((error) => {
         console.error('Erro ao obter detalhes do endereço:', error);
         throw error;

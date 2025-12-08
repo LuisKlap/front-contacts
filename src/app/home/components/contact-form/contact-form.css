@@ -261,6 +261,15 @@
 .source-badge.source-viacep\+google {
   background-color: #e8f5e9;
   color: #388e3c;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.source-badge.source-viacep-google svg,
+.source-badge.source-viacep\+google svg {
+  width: 12px;
+  height: 12px;
 }
 
 .source-badge.source-google-places {
