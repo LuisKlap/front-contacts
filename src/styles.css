@@ -3,6 +3,8 @@
 html,
 body {
   height: 100%;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
@@ -10,34 +12,33 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-/* Auth background */
-app-auth .min-h-screen {
-  background-image: url(/map.jpg);
-  background-size: cover;
-  background-position: center;
+/* Auth Pages Background */
+.min-h-screen {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
   position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  width: 100%;
 }
 
-app-auth .min-h-screen__overlay {
+.min-h-screen__overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(2px);
   z-index: 1;
 }
 
-app-auth .min-h-screen>* {
+.min-h-screen>* {
   position: relative;
   z-index: 2;
 }
 
 @media (max-width: 420px) {
-  app-auth .min-h-screen {
+  .min-h-screen {
     padding: 16px;
   }
 }

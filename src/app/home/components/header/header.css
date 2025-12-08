@@ -115,6 +115,18 @@
 
 ::ng-deep .mat-mdc-menu-panel {
   min-width: 280px !important;
+  max-width: 320px !important;
+}
+
+::ng-deep .mat-mdc-menu-content {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  max-width: 100%;
+}
+
+::ng-deep .mat-mdc-menu-item {
+  max-width: 100%;
+  overflow: hidden;
 }
 
 @media (max-width: 600px) {

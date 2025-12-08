@@ -156,14 +156,15 @@ export class MapComponent implements OnChanges {
 
     return {
       icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: isSelected ? 12 : 8,
-        fillColor: isSelected ? '#FF0000' : '#4285F4',
+        path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
+        fillColor: isSelected ? '#DC143C' : '#E53935',
         fillOpacity: 1,
-        strokeWeight: 2,
+        strokeWeight: 1,
         strokeColor: '#FFFFFF',
+        scale: isSelected ? 2 : 1.5,
+        anchor: new google.maps.Point(12, 22),
       },
-      animation: isSelected ? google.maps.Animation.BOUNCE : undefined,
+      animation: undefined,
     };
   }
 

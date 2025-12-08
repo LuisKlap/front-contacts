@@ -1,8 +1,8 @@
 <div class="map-container">
   <google-map [center]="center" [zoom]="zoom" [options]="options" width="100%" height="100%">
 
-    <!-- Marcadores para cada contato com coordenadas válidas -->
-    <map-marker *ngFor="let contact of contacts; let i = index" [position]="getMarkerPosition(contact)!"
+    <!-- Marcadores apenas para contatos selecionados -->
+    <map-marker *ngFor="let contact of selectedContacts; let i = index" [position]="getMarkerPosition(contact)!"
       [options]="getMarkerOptions(contact)" [title]="contact.name" (mapClick)="openInfoWindow(i, contact)">
     </map-marker>
 

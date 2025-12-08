@@ -1,46 +1,49 @@
-<div class="signup-container">
-  <mat-card class="signup-card">
-    <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
-      <h2 class="title">Create account</h2>
+<div class="min-h-screen">
+  <div class="min-h-screen__overlay"></div>
+  <div class="signup-container">
+    <mat-card class="signup-card">
+      <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+        <h2 class="title">Create account</h2>
 
-      <mat-form-field appearance="outline" class="form-field" floatLabel="auto">
-        <mat-label>Full name</mat-label>
-        <input matInput formControlName="fullName" placeholder="John Doe" required />
-        <mat-error *ngIf="fullName?.hasError('required')">Full name is required</mat-error>
-        <mat-error *ngIf="fullName?.hasError('minlength')">Enter at least 3 characters</mat-error>
-      </mat-form-field>
+        <mat-form-field appearance="outline" class="form-field" floatLabel="auto">
+          <mat-label>Full name</mat-label>
+          <input matInput formControlName="fullName" placeholder="John Doe" required />
+          <mat-error *ngIf="fullName?.hasError('required')">Full name is required</mat-error>
+          <mat-error *ngIf="fullName?.hasError('minlength')">Enter at least 3 characters</mat-error>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline" class="form-field" floatLabel="auto">
-        <mat-label>Email</mat-label>
-        <input matInput formControlName="email" placeholder="user@example.com" required autocomplete="email" />
-        <mat-error *ngIf="email?.hasError('required')">Email is required</mat-error>
-        <mat-error *ngIf="email?.hasError('email')">Enter a valid email</mat-error>
-      </mat-form-field>
+        <mat-form-field appearance="outline" class="form-field" floatLabel="auto">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" placeholder="user@example.com" required autocomplete="email" />
+          <mat-error *ngIf="email?.hasError('required')">Email is required</mat-error>
+          <mat-error *ngIf="email?.hasError('email')">Enter a valid email</mat-error>
+        </mat-form-field>
 
-      <mat-form-field appearance="outline" class="form-field" floatLabel="auto">
-        <mat-label>Password</mat-label>
-        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" placeholder="password" required
-          autocomplete="new-password" />
+        <mat-form-field appearance="outline" class="form-field" floatLabel="auto">
+          <mat-label>Password</mat-label>
+          <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" placeholder="password" required
+            autocomplete="new-password" />
 
-        <button mat-icon-button matSuffix type="button" (click)="hide = !hide"
-          [attr.aria-label]="hide ? 'Show password' : 'Hide password'">
-          <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
-        </button>
-      </mat-form-field>
+          <button mat-icon-button matSuffix type="button" (click)="hide = !hide"
+            [attr.aria-label]="hide ? 'Show password' : 'Hide password'">
+            <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
 
-      <div class="button-group">
-        <button mat-raised-button color="primary" type="submit" [disabled]="signUpForm.invalid || isLoading">
-          <ng-container *ngIf="isLoading; else textLabel">
-            <mat-progress-spinner mode="indeterminate" diameter="18" strokeWidth="3"
-              [style.marginRight.px]="8"></mat-progress-spinner>
-          </ng-container>
-          <ng-template #textLabel>
-            Create account
-          </ng-template>
-        </button>
+        <div class="button-group">
+          <button mat-raised-button color="primary" type="submit" [disabled]="signUpForm.invalid || isLoading">
+            <ng-container *ngIf="isLoading; else textLabel">
+              <mat-progress-spinner mode="indeterminate" diameter="18" strokeWidth="3"
+                [style.marginRight.px]="8"></mat-progress-spinner>
+            </ng-container>
+            <ng-template #textLabel>
+              Create account
+            </ng-template>
+          </button>
 
-        <button mat-stroked-button type="button" (click)="onSignIn()">Already have an account? Sign in</button>
-      </div>
-    </form>
-  </mat-card>
+          <button mat-stroked-button type="button" (click)="onSignIn()">Already have an account? Sign in</button>
+        </div>
+      </form>
+    </mat-card>
+  </div>
 </div>

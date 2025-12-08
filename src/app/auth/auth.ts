@@ -8,8 +8,7 @@ import { Login } from './components/login/login';
   standalone: true,
   imports: [CommonModule, Signup, Login],
   templateUrl: './auth.html',
-  styleUrl: './auth.css',
-  encapsulation: ViewEncapsulation.None,
+  styleUrls: ['./auth.css'],
 })
 export class Auth {
   currentStep = signal<'login' | 'sign-up'>('sign-up');
