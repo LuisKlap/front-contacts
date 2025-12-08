@@ -78,22 +78,15 @@ export class Signup {
 
     this.authService.signup(payload)
       .pipe(
-        switchMap((res) => {
-          console.debug('Signup response', res);
-          if (res?.token) {
-            localStorage.setItem('auth_token', res.token);
-          }
-          // Após o signup bem-sucedido, carrega os dados do usuário
-          return this.accountService.getCurrentUser();
-        }),
         finalize(() => (this.isLoading = false))
       )
       .subscribe({
-        next: (user) => {
-          console.debug('User data loaded after signup', user);
-          this.snackBar.open('Signup successful. Redirecting...', 'OK', { duration: 2500 });
+        next: (res) => {
+          console.debug('Signup response', res);
+          this.snackBar.open('Account created successfully! Please login.', 'OK', { duration: 3000 });
           this.signUpForm.reset();
-          this.router.navigate(['/home']);
+          // Redireciona para a tela de login após cadastro bem-sucedido
+          this.router.navigate(['/login']);
         },
         error: (err) => {
           console.error('Signup error', err);

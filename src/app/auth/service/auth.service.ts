@@ -35,10 +35,8 @@ export class AuthService {
     });
   }
 
-  signup(data: SignupRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/signup`, data).pipe(
-      tap(response => this.setToken(response.token))
-    );
+  signup(data: SignupRequest): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/signup`, data);
   }
 
   login(data: LoginRequest): Observable<AuthResponse> {
