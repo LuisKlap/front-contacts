@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 interface SignupRequest {
   fullName: string;
@@ -21,15 +22,40 @@ interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly baseUrl = 'http://localhost:8080/api/auth';
-
-  constructor(private http: HttpClient) { }
+  private http = inject(HttpClient);
+  private readonly baseUrl = `${environment.apiUrl}/auth`;
+  private readonly TOKEN_KEY = 'auth_token';
 
   signup(data: SignupRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/signup`, data);
+    return this.http.post<AuthResponse>(`${this.baseUrl}/signup`, data).pipe(
+      tap(response => this.setToken(response.token))
+    );
   }
 
   login(data: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, data);
+    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, data).pipe(
+      tap(response => this.setToken(response.token))
+    );
+  }
+
+  logout(): void {
+    this.removeToken();
+    // O AccountService será limpo pelo interceptor ou pelo próprio componente
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  setToken(token: string): void {
+    localStorage.setItem(this.TOKEN_KEY, token);
+  }
+
+  removeToken(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.getToken();
   }
 }

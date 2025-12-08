@@ -1,0 +1,100 @@
+<div class="profile-edit-container">
+  <mat-card class="edit-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>edit</mat-icon>
+        Editar Perfil
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Carregando dados...</p>
+      </div>
+
+      <form [formGroup]="editForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+        <div class="form-section">
+          <h3>Informações Pessoais</h3>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="fullName" placeholder="Seu nome completo">
+            <mat-icon matPrefix>person</mat-icon>
+            <mat-error *ngIf="editForm.get('fullName')?.invalid">
+              {{ getErrorMessage('fullName') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>E-mail</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="seu@email.com">
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="editForm.get('email')?.invalid">
+              {{ getErrorMessage('email') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-section">
+          <h3>Alterar Senha (opcional)</h3>
+          <p class="section-description">Deixe em branco se não deseja alterar a senha</p>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Senha Atual</mat-label>
+            <input matInput [type]="hideCurrentPassword ? 'password' : 'text'" formControlName="currentPassword"
+              placeholder="Sua senha atual">
+            <mat-icon matPrefix>lock</mat-icon>
+            <button mat-icon-button matSuffix type="button" (click)="hideCurrentPassword = !hideCurrentPassword"
+              [attr.aria-label]="'Mostrar senha'" [attr.aria-pressed]="!hideCurrentPassword">
+              <mat-icon>{{ hideCurrentPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="editForm.get('currentPassword')?.invalid">
+              {{ getErrorMessage('currentPassword') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Nova Senha</mat-label>
+            <input matInput [type]="hideNewPassword ? 'password' : 'text'" formControlName="newPassword"
+              placeholder="Mínimo 6 caracteres">
+            <mat-icon matPrefix>lock_open</mat-icon>
+            <button mat-icon-button matSuffix type="button" (click)="hideNewPassword = !hideNewPassword"
+              [attr.aria-label]="'Mostrar senha'" [attr.aria-pressed]="!hideNewPassword">
+              <mat-icon>{{ hideNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="editForm.get('newPassword')?.invalid">
+              {{ getErrorMessage('newPassword') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Confirmar Nova Senha</mat-label>
+            <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword"
+              placeholder="Digite a senha novamente">
+            <mat-icon matPrefix>lock_open</mat-icon>
+            <button mat-icon-button matSuffix type="button" (click)="hideConfirmPassword = !hideConfirmPassword"
+              [attr.aria-label]="'Mostrar senha'" [attr.aria-pressed]="!hideConfirmPassword">
+              <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="editForm.get('confirmPassword')?.invalid">
+              {{ getErrorMessage('confirmPassword') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions *ngIf="!loading">
+      <button mat-button (click)="cancel()" [disabled]="submitting">
+        <mat-icon>close</mat-icon>
+        Cancelar
+      </button>
+      <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="submitting || editForm.invalid">
+        <mat-spinner *ngIf="submitting" diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+        <mat-icon *ngIf="!submitting">save</mat-icon>
+        {{ submitting ? 'Salvando...' : 'Salvar Alterações' }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

@@ -41,3 +41,18 @@ app-auth .min-h-screen>* {
     padding: 16px;
   }
 }
+
+/* Profile Dialog Backdrop */
+.profile-backdrop {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(3px);
+}
+
+.profile-dialog .mat-mdc-dialog-container {
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.profile-dialog .mat-mdc-dialog-surface {
+  border-radius: 8px;
+}

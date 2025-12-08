@@ -1,0 +1,32 @@
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+h2[mat-dialog-title] mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+mat-dialog-content {
+  padding: 24px;
+  min-width: 300px;
+}
+
+mat-dialog-content p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  gap: 12px;
+  border-top: 1px solid #e0e0e0;
+}

@@ -7,6 +7,7 @@ import { ContactFiltersComponent } from './components/contact-filters/contact-fi
 import { ContactListComponent } from './components/contact-list/contact-list';
 import { ContactFormComponent } from './components/contact-form/contact-form';
 import { MapComponent } from './components/map/map';
+import { HeaderComponent } from './components/header/header';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +17,8 @@ import { MapComponent } from './components/map/map';
     ContactFiltersComponent,
     ContactListComponent,
     ContactFormComponent,
-    MapComponent
+    MapComponent,
+    HeaderComponent
   ],
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
