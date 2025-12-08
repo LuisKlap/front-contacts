@@ -2,12 +2,12 @@
 <div class="form-overlay" (click)="cancel()">
   <!-- container interno impede propagação do clique para o overlay -->
   <div class="form-container" (click)="$event.stopPropagation()">
-    <h2>{{ contact ? 'Edit Contact' : 'New Contact' }}</h2>
+    <h2>{{ contact ? 'Editar Contato' : 'Novo Contato' }}</h2>
 
     <form [formGroup]="form" (ngSubmit)="submit()">
       <!-- Name - linha completa -->
       <div class="row">
-        <label>Name</label>
+        <label>Nome</label>
         <input formControlName="name" />
       </div>
 
@@ -19,7 +19,7 @@
         </div>
 
         <div class="row half">
-          <label>Phone</label>
+          <label>Telefone</label>
           <input formControlName="phone" mask="(00) 00000-0000" placeholder="(00) 00000-0000" />
         </div>
       </div>
@@ -30,7 +30,7 @@
           <label>CEP</label>
           <div class="address-input-wrapper">
             <input formControlName="cep" mask="00000-000" placeholder="00000-000" />
-            <span *ngIf="isLoadingAddress" class="loading-indicator">Searching...</span>
+            <span *ngIf="isLoadingAddress" class="loading-indicator">Buscando...</span>
           </div>
         </div>
       </div>
@@ -38,7 +38,7 @@
       <!-- State e City - mesma linha -->
       <div class="row-group">
         <div class="row half">
-          <label>State (UF)</label>
+          <label>Estado (UF)</label>
           <div class="address-input-wrapper">
             <input formControlName="state" placeholder="Ex: SP" maxlength="2"
               (input)="onStateInput($any($event.target).value)" (focus)="showStateSuggestions = states.length > 0"
@@ -54,11 +54,11 @@
         </div>
 
         <div class="row half">
-          <label>City</label>
+          <label>Cidade</label>
           <div class="address-input-wrapper">
             <input formControlName="city" placeholder="Ex: São Paulo" (input)="onCityInput($any($event.target).value)"
               (focus)="showCitySuggestions = cities.length > 0" (blur)="closeCitySuggestions()" />
-            <span *ngIf="isLoadingCities" class="loading-indicator">Loading...</span>
+            <span *ngIf="isLoadingCities" class="loading-indicator">Carregando...</span>
 
             <!-- Sugestões de cidades -->
             <div class="address-suggestions" *ngIf="showCitySuggestions && cities.length > 0">
@@ -72,12 +72,12 @@
 
       <!-- Street - linha completa -->
       <div class="row">
-        <label>Street</label>
+        <label>Rua</label>
         <div class="address-input-wrapper">
-          <input class="row-width-100" formControlName="street" placeholder="Type street name..."
+          <input class="row-width-100" formControlName="street" placeholder="Digite o nome da rua..."
             (input)="onStreetChange($any($event.target).value)"
             (focus)="showSuggestions = addressSuggestions.length > 0" (blur)="closeSuggestions()" />
-          <span *ngIf="isLoadingAddress" class="loading-indicator">Searching...</span>
+          <span *ngIf="isLoadingAddress" class="loading-indicator">Buscando...</span>
 
           <!-- Sugestões de endereço do Google Places -->
           <div class="address-suggestions" *ngIf="showSuggestions && addressSuggestions.length > 0">
@@ -105,24 +105,24 @@
       <!-- Number e Complement - mesma linha -->
       <div class="row-group">
         <div class="row half">
-          <label>Number</label>
+          <label>Número</label>
           <input formControlName="number" />
         </div>
 
         <div class="row half">
-          <label>Complement</label>
+          <label>Complemento</label>
           <input formControlName="complement" />
         </div>
       </div>
 
       <!-- Neighborhood - linha completa -->
       <div class="row">
-        <label>Neighborhood</label>
+        <label>Bairro</label>
         <div class="address-input-wrapper">
           <input class="row-width-100" formControlName="neighborhood" placeholder="Ex: Centro"
             (input)="onNeighborhoodInput($any($event.target).value)"
             (focus)="showNeighborhoodSuggestions = neighborhoods.length > 0" (blur)="closeNeighborhoodSuggestions()" />
-          <span *ngIf="isLoadingNeighborhoods" class="loading-indicator">Loading...</span>
+          <span *ngIf="isLoadingNeighborhoods" class="loading-indicator">Carregando...</span>
 
           <!-- Sugestões de bairros -->
           <div class="address-suggestions" *ngIf="showNeighborhoodSuggestions && neighborhoods.length > 0">
@@ -138,8 +138,8 @@
 
 
       <div class="actions">
-        <button type="button" class="btn secondary" (click)="cancel()">Cancel</button>
-        <button type="submit" class="btn primary">Save</button>
+        <button type="button" class="btn secondary" (click)="cancel()">Cancelar</button>
+        <button type="submit" class="btn primary">Salvar</button>
       </div>
     </form>
   </div>

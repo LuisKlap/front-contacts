@@ -63,7 +63,7 @@ export class Signup {
   onSubmit(): void {
     if (this.signUpForm.invalid) {
       this.signUpForm.markAllAsTouched();
-      this.snackBar.open('Please fix the errors in the form.', 'OK', { duration: 3000 });
+      this.snackBar.open('Por favor, corrija os erros no formulário.', 'OK', { duration: 3000 });
       return;
     }
 
@@ -83,7 +83,7 @@ export class Signup {
       .subscribe({
         next: (res) => {
           console.debug('Signup response', res);
-          this.snackBar.open('Account created successfully! Please login.', 'OK', { duration: 3000 });
+          this.snackBar.open('Conta criada com sucesso! Por favor, faça login.', 'OK', { duration: 3000 });
           this.signUpForm.reset();
           // Redireciona para a tela de login após cadastro bem-sucedido
           this.router.navigate(['/login']);
@@ -94,7 +94,7 @@ export class Signup {
           const backendMessage =
             err?.error?.message ||
             (err?.error && typeof err.error === 'string' ? err.error : null);
-          const message = backendMessage || err?.message || 'Signup failed';
+          const message = backendMessage || err?.message || 'Falha no cadastro';
           this.snackBar.open(message, 'OK', { duration: 6000 });
         }
       });

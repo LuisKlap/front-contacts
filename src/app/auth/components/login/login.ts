@@ -58,7 +58,7 @@ export class Login {
   onSubmit(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
-      this.snackBar.open('Please fix the errors in the form.', 'OK', { duration: 3000 });
+      this.snackBar.open('Por favor, corrija os erros no formulário.', 'OK', { duration: 3000 });
       return;
     }
 
@@ -87,7 +87,7 @@ export class Login {
       .subscribe({
         next: (user) => {
           console.debug('User data loaded after login', user);
-          this.snackBar.open('Login successful.', 'OK', { duration: 2000 });
+          this.snackBar.open('Login realizado com sucesso.', 'OK', { duration: 2000 });
           this.loginForm.reset();
 
           this.router.navigate(['/home']);
@@ -97,7 +97,7 @@ export class Login {
           const backendMessage =
             err?.error?.message ||
             (err?.error && typeof err.error === 'string' ? err.error : null);
-          const message = backendMessage || err?.message || 'Login failed';
+          const message = backendMessage || err?.message || 'Falha no login';
           this.snackBar.open(message, 'OK', { duration: 6000 });
         }
       });

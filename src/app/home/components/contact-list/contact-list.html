@@ -1,16 +1,17 @@
 <div class="list-container">
   <div class="header">
-    <h3>Contacts</h3>
-    <button class="btn primary" (click)="onCreate()">New</button>
+    <h3>Contatos</h3>
+    <button class="btn primary" (click)="onCreate()">Novo</button>
   </div>
 
   <div *ngIf="selectedContacts && selectedContacts.length > 0" class="selection-info">
     <span class="material-icons">pin_drop</span>
-    {{ selectedContacts.length }} contact{{ selectedContacts.length > 1 ? 's' : '' }} selected on map
+    {{ selectedContacts.length }} contato{{ selectedContacts.length > 1 ? 's' : '' }} selecionado{{
+    selectedContacts.length > 1 ? 's' : '' }} no mapa
   </div>
 
   <div *ngIf="loading" class="loading">
-    Loading...
+    Carregando...
   </div>
 
   <div class="list">
@@ -19,7 +20,7 @@
     </app-contact-item>
 
     <div *ngIf="!loading && contacts.length === 0" class="empty">
-      No contacts found.
+      Nenhum contato encontrado.
     </div>
   </div>
 </div>
