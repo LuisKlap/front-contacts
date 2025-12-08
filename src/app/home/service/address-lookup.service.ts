@@ -6,6 +6,7 @@ import { catchError, map } from 'rxjs/operators';
 import { Address, AddressSearchParams } from '../models/address.model';
 import { GooglePlacesService, PlacePrediction } from './google-places.service';
 import { BrazilianDataService } from './brazilian-data.service';
+import { environment } from '../../../environments/environment';
 
 /**
  * Serviço de busca de endereços usando estratégia híbrida:
@@ -29,7 +30,7 @@ export class AddressLookupService {
   private http = inject(HttpClient);
   private googlePlaces = inject(GooglePlacesService);
   private brazilianData = inject(BrazilianDataService);
-  private baseUrl = 'http://localhost:8080/api/address';
+  private baseUrl = `${environment.apiUrl}/address`;
 
   /**
    * Lista todos os estados brasileiros (do arquivo local)
