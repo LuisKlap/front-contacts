@@ -1,5 +1,6 @@
-import { Component, signal, effect } from '@angular/core';
+import { Component, signal, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ContactService } from './service/contact.service';
 
 // imports dos componentes standalone
@@ -18,7 +19,8 @@ import { HeaderComponent } from './components/header/header';
     ContactListComponent,
     ContactFormComponent,
     MapComponent,
-    HeaderComponent
+    HeaderComponent,
+    MatSnackBarModule
   ],
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
@@ -35,6 +37,8 @@ export class Home {
   filter = signal('');
   page = signal(0);
   size = signal(10);
+
+  private snackBar = inject(MatSnackBar);
 
   constructor(private contactService: ContactService) {
     effect(() => {
@@ -90,6 +94,7 @@ export class Home {
   }
 
   onSave(contact: any) {
+    console.log('Salvando contato:', contact);
     const editing = !!contact.id;
 
     const request = editing
@@ -100,6 +105,14 @@ export class Home {
       next: () => {
         this.showForm.set(false);
         this.fetchContacts();
+      },
+      error: (err) => {
+        // Extrai a mensagem de erro do backend
+        const errorMsg = err?.error?.message || 'Erro ao salvar contato. Tente novamente.';
+        this.snackBar.open(errorMsg, 'Fechar', {
+          duration: 5000,
+          panelClass: ['error-snackbar']
+        });
       }
     });
   }

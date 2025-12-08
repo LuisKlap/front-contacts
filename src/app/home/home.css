@@ -191,3 +191,14 @@
   gap: 8px;
   align-items: center;
 }
+
+/* Estilos para snackbar */
+::ng-deep .success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+::ng-deep .error-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
+}
