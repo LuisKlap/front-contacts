@@ -84,12 +84,20 @@
                 </span>
               </div>
               <div class="suggestion-meta">
-                <span class="source-badge source-google-places">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <span class="source-badge" [ngClass]="{
+                  'source-google-places': addr.source === 'google-places',
+                  'source-viacep': addr.source === 'viacep'
+                }">
+                  <svg *ngIf="addr.source === 'google-places'" width="12" height="12" viewBox="0 0 24 24"
+                    fill="currentColor">
                     <path
                       d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
-                  Google Places
+                  <svg *ngIf="addr.source === 'viacep'" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                  </svg>
+                  {{ addr.source === 'viacep' ? 'ViaCEP' : 'Google Places' }}
                 </span>
               </div>
             </div>

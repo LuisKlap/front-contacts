@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, OnDes
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
-import { Subject, takeUntil, debounceTime, distinctUntilChanged, switchMap, tap, of } from 'rxjs';
+import { Subject, takeUntil, debounceTime, distinctUntilChanged, switchMap, tap, of, map } from 'rxjs';
 import { AddressLookupService } from '../../service/address-lookup.service';
 import { Address } from '../../models/address.model';
 
@@ -161,7 +161,7 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
       });
   }
 
-  // Configura busca por rua com autocomplete usando Google Places
+  // Configura busca por rua com autocomplete usando Google Places + ViaCEP
   private setupStreetSearch(): void {
     this.streetSearchSubject
       .pipe(
@@ -182,10 +182,26 @@ export class ContactFormComponent implements OnChanges, OnDestroy {
             return [];
           }
 
-          // Obtém UF e cidade se já estiverem preenchidos (ajuda a refinar busca)
+          // Obtém UF e cidade se já estiverem preenchidos
           const state = this.form.get('state')?.value;
           const city = this.form.get('city')?.value;
 
+          // Se tem UF e cidade, busca no ViaCEP + Google Places
+          if (state && city) {
+            return this.addressService.searchByUfCityStreet(state, city, searchTerm).pipe(
+              switchMap((viaCepResults) => {
+                // Também busca no Google Places
+                return this.addressService.searchStreets(searchTerm, city, state).pipe(
+                  map((googleResults) => {
+                    // Combina resultados: ViaCEP primeiro (mais precisos)
+                    return [...viaCepResults, ...googleResults];
+                  })
+                );
+              })
+            );
+          }
+
+          // Se não tem UF e cidade, usa apenas Google Places
           return this.addressService.searchStreets(searchTerm, city, state);
         })
       )

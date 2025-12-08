@@ -109,6 +109,13 @@ export class AddressLookupService {
     return this.http
       .get<Address[]>(`${this.baseUrl}/search`, { params: httpParams })
       .pipe(
+        map((addresses) =>
+          addresses.map((addr) => ({
+            ...addr,
+            source: 'viacep' as const,
+            exact: true,
+          }))
+        ),
         catchError((error) => {
           console.error('Erro ao buscar endereços:', error);
           return of([]);
