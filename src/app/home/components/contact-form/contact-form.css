@@ -80,6 +80,18 @@
   border-color: #d32f2f;
 }
 
+.row input.ng-invalid.ng-touched {
+  border-color: #d32f2f;
+}
+
+.error-message {
+  display: block;
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
 .row-width-100 {
   width: 95%;
 }
@@ -129,8 +141,14 @@
 }
 
 .btn.primary:disabled {
-  background: #ccc;
+  background: #bdbdbd;
+  color: #fff;
   cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn.primary:disabled:hover {
+  background: #bdbdbd;
   transform: none;
   box-shadow: none;
 }

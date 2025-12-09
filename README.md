@@ -1,59 +1,240 @@
-# FrontContacts
+# 📇 FrontContacts
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.2.
+Sistema completo de gerenciamento de contatos com autenticação, integração com Google Maps e busca avançada por CEP/endereço.
 
-## Development server
+## 🚀 Tecnologias
 
-To start a local development server, run:
+- **Angular 21** - Framework principal
+- **Angular Material** - Componentes UI
+- **Google Maps API** - Mapas e geolocalização
+- **ngx-mask** - Máscaras para inputs
+- **RxJS** - Programação reativa
+- **Vitest** - Testes unitários
+- **TypeScript** - Tipagem estática
 
+## ✨ Funcionalidades
+
+### 🔐 Autenticação
+- Cadastro de novos usuários
+- Login com email e senha
+- Guarda de rotas (AuthGuard)
+- Interceptor HTTP para injeção de token JWT
+- Gerenciamento de sessão
+
+### 👤 Perfil de Usuário
+- Visualização de perfil
+- Edição de dados pessoais
+- Exclusão de conta
+
+### 📋 Gerenciamento de Contatos
+- **CRUD completo** de contatos
+- **Busca e filtros** avançados
+- **Paginação** de resultados
+- **Ordenação** personalizável
+- **Visualização em lista** com detalhes
+
+### 🗺️ Integração com Mapas
+- **Google Maps** integrado
+- **Busca por CEP** (ViaCEP)
+- **Autocomplete de endereços** (Google Places API)
+- **Geolocalização** de contatos
+- **Busca por cidades brasileiras**
+
+## 📁 Estrutura do Projeto
+
+```
+src/
+├── app/
+│   ├── auth/                      # Módulo de autenticação
+│   │   ├── components/
+│   │   │   ├── login/            # Componente de login
+│   │   │   └── signup/           # Componente de cadastro
+│   │   ├── guards/
+│   │   │   └── auth.guard.ts     # Guarda de rotas autenticadas
+│   │   ├── interceptors/
+│   │   │   └── auth.interceptor.ts # Interceptor JWT
+│   │   ├── service/
+│   │   │   ├── auth.service.ts   # Serviço de autenticação
+│   │   │   └── account.service.ts # Serviço de conta
+│   │   └── models/
+│   │       └── user.model.ts     # Modelo de usuário
+│   │
+│   ├── home/                      # Módulo principal
+│   │   ├── components/
+│   │   │   ├── contact-filters/  # Filtros de busca
+│   │   │   ├── contact-form/     # Formulário de contato
+│   │   │   ├── contact-item/     # Item da lista
+│   │   │   ├── contact-list/     # Lista de contatos
+│   │   │   ├── header/           # Cabeçalho
+│   │   │   └── map/              # Componente do mapa
+│   │   ├── service/
+│   │   │   ├── contact.service.ts          # CRUD de contatos
+│   │   │   ├── address-lookup.service.ts   # Busca de endereços
+│   │   │   ├── google-places.service.ts    # Google Places API
+│   │   │   └── brazilian-data.service.ts   # Dados brasileiros
+│   │   └── models/
+│   │       ├── contact.model.ts  # Modelo de contato
+│   │       └── address.model.ts  # Modelo de endereço
+│   │
+│   ├── profile/                   # Módulo de perfil
+│   │   └── components/
+│   │       ├── profile-view/     # Visualização do perfil
+│   │       ├── profile-edit/     # Edição do perfil
+│   │       ├── profile-delete/   # Exclusão da conta
+│   │       └── confirm-dialog/   # Dialog de confirmação
+│   │
+│   ├── app.routes.ts             # Rotas da aplicação
+│   └── app.config.ts             # Configuração global
+│
+├── environments/
+│   ├── environment.ts            # Configuração desenvolvimento
+│   └── environment.prod.ts       # Configuração produção
+│
+└── assets/                       # Recursos estáticos
+```
+
+## 🛠️ Instalação e Configuração
+
+### Pré-requisitos
+- Node.js 18+ 
+- npm 11.6.2+
+- Angular CLI 21+
+
+### 1. Clone o repositório
 ```bash
+git clone https://github.com/LuisKlap/front-contacts.git
+cd front-contacts
+```
+
+### 2. Instale as dependências
+```bash
+npm install
+```
+
+### 3. Configure as variáveis de ambiente
+
+Crie um arquivo `src/environments/environment.ts` com:
+
+```typescript
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:8080/api',
+  googleMapsApiKey: 'SUA_GOOGLE_MAPS_API_KEY'
+};
+```
+
+### 4. Inicie o servidor de desenvolvimento
+```bash
+npm start
+# ou
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Acesse `http://localhost:4200/`
 
-## Code scaffolding
+## 🌐 Deploy (Vercel)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+O projeto está configurado para deploy automático no Vercel.
 
-```bash
-ng generate component component-name
+### Variáveis de Ambiente Necessárias
+
+Configure no painel do Vercel:
+
+```
+API_KEY=sua_google_maps_api_key
+API_URL=https://seu-backend.railway.app/api
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Build e Deploy
 
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
+O script `replace-env.js` automaticamente injeta as variáveis de ambiente no `index.html` durante o build.
 
-To build the project run:
+Para mais detalhes, consulte [VERCEL_ENV.md](./VERCEL_ENV.md)
+
+## 🧪 Testes
+
+Execute os testes unitários com Vitest:
 
 ```bash
-ng build
+npm test
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 📦 Scripts Disponíveis
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
+```json
+{
+  "start": "ng serve",                    // Servidor de desenvolvimento
+  "build": "ng build && node replace-env.js", // Build para produção
+  "build:dev": "ng build",                // Build sem injeção de env
+  "watch": "ng build --watch",            // Build em modo watch
+  "test": "ng test"                       // Executa testes
+}
 ```
 
-## Running end-to-end tests
+## 🔑 Autenticação
 
-For end-to-end (e2e) testing, run:
+O sistema utiliza **JWT (JSON Web Tokens)** para autenticação:
 
-```bash
-ng e2e
-```
+1. Usuário faz login/signup
+2. Backend retorna um token JWT
+3. Token é armazenado no `localStorage`
+4. `AuthInterceptor` injeta o token em todas as requisições
+5. `AuthGuard` protege rotas que exigem autenticação
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## 🗺️ Integração com Google Maps
 
-## Additional Resources
+### APIs Utilizadas
+- **Maps JavaScript API** - Renderização de mapas
+- **Places API** - Autocomplete de endereços
+- **Geocoding API** - Conversão de endereços em coordenadas
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Configuração
+1. Obtenha uma API Key no [Google Cloud Console](https://console.cloud.google.com/)
+2. Habilite as APIs necessárias
+3. Configure restrições de domínio
+4. Adicione a chave no `environment.ts`
+
+## 📱 Funcionalidades por Rota
+
+| Rota              | Descrição            | Proteção  |
+| ----------------- | -------------------- | --------- |
+| `/login`          | Login de usuários    | Pública   |
+| `/signup`         | Cadastro de usuários | Pública   |
+| `/home`           | Lista de contatos    | Protegida |
+| `/profile`        | Visualizar perfil    | Protegida |
+| `/profile/edit`   | Editar perfil        | Protegida |
+| `/profile/delete` | Excluir conta        | Protegida |
+
+## 🎨 Customização de Tema
+
+O projeto utiliza Angular Material com tema customizado em `src/custom-theme.scss`.
+
+## 🤝 Contribuindo
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
+
+## 📝 Licença
+
+Este projeto é privado e de uso educacional.
+
+## 👨‍💻 Autor
+
+**Luis Klap**
+- GitHub: [@LuisKlap](https://github.com/LuisKlap)
+
+## 🔗 Links Úteis
+
+- [Documentação do Angular](https://angular.dev)
+- [Angular Material](https://material.angular.io)
+- [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript)
+- [ViaCEP API](https://viacep.com.br)
+
+---

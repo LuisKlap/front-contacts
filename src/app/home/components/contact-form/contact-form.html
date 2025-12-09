@@ -4,35 +4,47 @@
 
     <form [formGroup]="form" (ngSubmit)="submit()">
       <div class="row">
-        <label>Nome</label>
+        <label>Nome *</label>
         <input formControlName="name" />
+        <span class="error-message" *ngIf="form.get('name')?.invalid && form.get('name')?.touched">
+          Nome é obrigatório
+        </span>
       </div>
 
       <div class="row-group">
         <div class="row half">
-          <label>CPF</label>
+          <label>CPF *</label>
           <input formControlName="cpf" mask="000.000.000-00" placeholder="000.000.000-00" />
+          <span class="error-message" *ngIf="form.get('cpf')?.invalid && form.get('cpf')?.touched">
+            CPF é obrigatório
+          </span>
         </div>
 
         <div class="row half">
-          <label>Telefone</label>
+          <label>Telefone *</label>
           <input formControlName="phone" mask="(00) 00000-0000" placeholder="(00) 00000-0000" />
+          <span class="error-message" *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched">
+            Telefone é obrigatório
+          </span>
         </div>
       </div>
 
       <div class="row-group">
         <div class="row half">
-          <label>CEP</label>
+          <label>CEP *</label>
           <div class="address-input-wrapper">
             <input formControlName="cep" mask="00000-000" placeholder="00000-000" />
             <span *ngIf="isLoadingAddress" class="loading-indicator"></span>
           </div>
+          <span class="error-message" *ngIf="form.get('cep')?.invalid && form.get('cep')?.touched">
+            CEP é obrigatório
+          </span>
         </div>
       </div>
 
       <div class="row-group">
         <div class="row half">
-          <label>Estado (UF)</label>
+          <label>Estado (UF) *</label>
           <div class="address-input-wrapper">
             <input formControlName="state" placeholder="Ex: SP" maxlength="2"
               (input)="onStateInput($any($event.target).value)" (focus)="onStateFocus()"
@@ -44,10 +56,13 @@
               </div>
             </div>
           </div>
+          <span class="error-message" *ngIf="form.get('state')?.invalid && form.get('state')?.touched">
+            Estado é obrigatório
+          </span>
         </div>
 
         <div class="row half">
-          <label>Cidade</label>
+          <label>Cidade *</label>
           <div class="address-input-wrapper">
             <input formControlName="city" placeholder="Ex: São Paulo" (input)="onCityInput($any($event.target).value)"
               (focus)="onCityFocus()" (blur)="closeCitySuggestions()" />
@@ -62,11 +77,14 @@
               </div>
             </div>
           </div>
+          <span class="error-message" *ngIf="form.get('city')?.invalid && form.get('city')?.touched">
+            Cidade é obrigatória
+          </span>
         </div>
       </div>
 
       <div class="row">
-        <label>Rua</label>
+        <label>Rua *</label>
         <div class="address-input-wrapper">
           <input class="row-width-100" formControlName="street" placeholder="Digite o nome da rua..."
             (input)="onStreetChange($any($event.target).value)" />
@@ -110,12 +128,18 @@
             </div>
           </div>
         </div>
+        <span class="error-message" *ngIf="form.get('street')?.invalid && form.get('street')?.touched">
+          Rua é obrigatória
+        </span>
       </div>
 
       <div class="row-group">
         <div class="row half">
-          <label>Número</label>
+          <label>Número *</label>
           <input formControlName="number" />
+          <span class="error-message" *ngIf="form.get('number')?.invalid && form.get('number')?.touched">
+            Número é obrigatório
+          </span>
         </div>
 
         <div class="row half">
@@ -125,7 +149,7 @@
       </div>
 
       <div class="row">
-        <label>Bairro</label>
+        <label>Bairro *</label>
         <div class="address-input-wrapper">
           <input class="row-width-100" formControlName="neighborhood" placeholder="Ex: Centro"
             (input)="onNeighborhoodInput($any($event.target).value)" />
@@ -143,11 +167,14 @@
             </div>
           </div>
         </div>
+        <span class="error-message" *ngIf="form.get('neighborhood')?.invalid && form.get('neighborhood')?.touched">
+          Bairro é obrigatório
+        </span>
       </div>
 
       <div class="actions">
         <button type="button" class="btn secondary" (click)="cancel()">Cancelar</button>
-        <button type="submit" class="btn primary">Salvar</button>
+        <button type="submit" class="btn primary" [disabled]="form.invalid">Salvar</button>
       </div>
     </form>
   </div>
