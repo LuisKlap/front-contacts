@@ -75,10 +75,6 @@ export class Login {
         switchMap((res) => {
           console.debug('Login response', res);
 
-          if (res?.token) {
-            localStorage.setItem('auth_token', res.token);
-          }
-
           // Após o login bem-sucedido, carrega os dados do usuário
           return this.accountService.getCurrentUser();
         }),
@@ -97,7 +93,7 @@ export class Login {
           const backendMessage =
             err?.error?.message ||
             (err?.error && typeof err.error === 'string' ? err.error : null);
-          const message = backendMessage || err?.message || 'Falha no login';
+          const message = backendMessage || err?.message || 'Email ou senha inválidos';
           this.snackBar.open(message, 'OK', { duration: 6000 });
         }
       });

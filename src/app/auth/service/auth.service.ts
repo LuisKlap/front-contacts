@@ -1,32 +1,24 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, BehaviorSubject, tap, catchError, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { TokenService } from './token.service';
+import { AuthResponse, LoginRequest, SignupRequest, RefreshTokenRequest } from '../models/auth.model';
 import { AccountService } from './account.service';
-
-interface SignupRequest {
-  fullName: string;
-  email: string;
-  password: string;
-}
-
-interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-interface AuthResponse {
-  token: string;
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private http = inject(HttpClient);
-  private accountService!: AccountService; // Injeção tardia para evitar dependência circular
   private readonly baseUrl = `${environment.apiUrl}/auth`;
-  private readonly TOKEN_KEY = 'auth_token';
+  private http = inject(HttpClient);
+  private tokenService = inject(TokenService);
+  private router = inject(Router);
+  private accountService!: AccountService; // Injeção tardia para evitar dependência circular
+
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasValidToken());
+  public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor() {
     // Injeção tardia do AccountService para evitar dependência circular
@@ -35,37 +27,88 @@ export class AuthService {
     });
   }
 
-  signup(data: SignupRequest): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/signup`, data);
+  private hasValidToken(): boolean {
+    return !!this.tokenService.getAccessToken() &&
+      !this.tokenService.isAccessTokenExpired();
   }
 
-  login(data: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, data).pipe(
-      tap(response => this.setToken(response.token))
+  login(credentials: LoginRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, credentials).pipe(
+      tap(response => {
+        this.tokenService.saveTokens(response.accessToken, response.refreshToken);
+        this.isAuthenticatedSubject.next(true);
+
+        // Agenda refresh automático
+        this.tokenService.scheduleTokenRefresh(response.expiresIn, () => {
+          this.refreshToken().subscribe();
+        });
+      }),
+      catchError(error => {
+        console.error('Login error:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  signup(data: SignupRequest): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/signup`, data);
+  }
+
+  refreshToken(): Observable<AuthResponse> {
+    const refreshToken = this.tokenService.getRefreshToken();
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    const request: RefreshTokenRequest = { refreshToken };
+    return this.http.post<AuthResponse>(`${this.baseUrl}/refresh`, request).pipe(
+      tap(response => {
+        this.tokenService.saveTokens(response.accessToken, response.refreshToken);
+        this.isAuthenticatedSubject.next(true);
+
+        // Agenda próximo refresh
+        this.tokenService.scheduleTokenRefresh(response.expiresIn, () => {
+          this.refreshToken().subscribe();
+        });
+      }),
+      catchError(error => {
+        this.logout();
+        return throwError(() => error);
+      })
     );
   }
 
   logout(): void {
-    this.removeToken();
+    const refreshToken = this.tokenService.getRefreshToken();
+
+    if (refreshToken) {
+      this.http.post(`${this.baseUrl}/logout`, { refreshToken })
+        .subscribe({
+          complete: () => this.completeLogout()
+        });
+    } else {
+      this.completeLogout();
+    }
+  }
+
+  private completeLogout(): void {
+    this.tokenService.clearTokens();
+    this.isAuthenticatedSubject.next(false);
+
     // Limpa os dados do usuário do AccountService
     if (this.accountService) {
       this.accountService.clearUser();
     }
-  }
 
-  getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
-  }
-
-  setToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
-  }
-
-  removeToken(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
+    this.router.navigate(['/login']);
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    return this.isAuthenticatedSubject.value;
+  }
+
+  // Método legado para compatibilidade
+  getToken(): string | null {
+    return this.tokenService.getAccessToken();
   }
 }
